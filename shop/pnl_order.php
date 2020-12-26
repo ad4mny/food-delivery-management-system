@@ -1,7 +1,6 @@
 <?php
 include ('../db.php');
 
-
 if ($_GET['act'] == 'ordrdel') {
 
 	$id = decryptIt($_GET['id']);

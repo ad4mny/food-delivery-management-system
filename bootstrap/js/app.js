@@ -7,11 +7,6 @@ $(document).ready(function () {
     var filter = url.searchParams.get("q_filter");
     var errors = { "usr": "0", "pwd": "0" };
 
-    if (action == 'view') {
-        $('#menu_info').removeClass("d-none");
-        $('#browse_box').addClass("d-none");
-
-    }
 
     //Search Ajax
     $('#search_query').on('keyup', function () {

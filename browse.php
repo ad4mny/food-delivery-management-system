@@ -119,7 +119,7 @@ if ($_GET['act'] == 'add') {
 
 					?>
 
-						<div class="card text-right" style="width: 18rem;">
+						<div class="card " style="width: 18rem;">
 
 							<?php
 
@@ -134,55 +134,19 @@ if ($_GET['act'] == 'add') {
 							?>
 
 							<div class="card-body">
-								<h5 class="card-title"><?php echo $itm_name; ?></h5>
-								<p class="card-text">RM <?php echo $itm_prc; ?></p>
+								<h5 class="card-title text-capitalize"><?php echo $itm_name; ?></h5>
+								<p class="card-text text-muted"><?php echo $itm_desc; ?></p>
+								<p class="card-text text-capitalize"><?php echo $itm_shp . "'s Shop"; ?></p>
 							</div>
-							<div class="card-body" id="<?php echo encryptIt($itm_id); ?>">
-								<a href="browse?act=view&id=<?php echo encryptIt($itm_id); ?>" class="btn btn-outline-success mx-1">More info</a>
-								<a href="browse?act=add&id=<?php echo encryptIt($itm_id); ?>" class="btn btn-success">Add to cart</a>
+							<div class="card-footer text-right" id="<?php echo encryptIt($itm_id); ?>">
+								<h5 class="card-text float-left text-success">RM <?php echo number_format($itm_prc, 2); ?></h5>
+								<a href="browse?act=add&id=<?php echo encryptIt($itm_id); ?>" class="btn btn-success ">Add to cart</a>
 							</div>
 						</div>
 					<?php
 					}
 					?>
 				</div>
-			</div>
-		</div>
-	</div>
-
-	<div class="container p-5 d-none" id="menu_info">
-
-		<?php
-		$id = decryptIt($_GET['id']);
-
-		$query = "SELECT * from fds_ctlog WHERE ctlog_id='$id'";
-		$row = mysqli_fetch_assoc(mysqli_query($conn, $query));
-		?>
-
-		<h2 class="display-4 text-light"><?php echo $row['ctlog_nme']; ?></h2>
-
-		<div class="card">
-			<?php
-
-			if ($row['ctlog_img'] != null) {
-
-				echo '<img class="card-img-top" src="img/menu/' . $row['ctlog_img'] . '" alt="Card image cap">';
-			} else {
-
-				echo '<img class="card-img-top" src="https://dummyimage.com/640x360/f0f0f0/aaa" alt="Card image cap">';
-			}
-
-			?>
-
-			<div class="card-body">
-				<p class="card-text text-truncate"><?php echo $row['ctlog_desc']; ?></p>
-			</div>
-			<ul class="list-group list-group-flush">
-				<li class="list-group-item">RM <?php echo $row['ctlog_prc']; ?></li>
-				<li class="list-group-item"><?php echo $row['ctlog_shp']; ?></li>
-			</ul>
-			<div class="card-body text-center" id="<?php echo encryptIt($row['ctlog_id']); ?>">
-				<a href="browse?act=add&id=<?php echo encryptIt($row['ctlog_id']); ?>" class="btn btn-success">Add to cart</a>
 			</div>
 		</div>
 	</div>

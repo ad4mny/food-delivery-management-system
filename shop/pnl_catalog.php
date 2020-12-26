@@ -1,6 +1,7 @@
 <?php
 session_start();
 include ('../db.php');
+$usr_id = $_SESSION['sess_id'];
 
 if(!isset($_SESSION["sess_id"])) {
 	header ('location: ../index');
@@ -53,7 +54,7 @@ if(!isset($_SESSION["sess_id"])) {
 					</tr>
 
 					<?php
-					$query = "SELECT * from fds_ctlog";
+					$query = "SELECT * from fds_ctlog WHERE ctlog_usrdt_id = '$usr_id'";
 					$result = mysqli_query($conn, $query);
 					$count = 1;
 
