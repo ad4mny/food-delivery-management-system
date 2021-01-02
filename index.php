@@ -61,6 +61,9 @@ if (isset($_GET['id'])) {
                 <li class="nav-item">
                     <a class="nav-link" href="checkout">Checkout</a>
                 </li>
+                <li class="nav-item">
+					<a class="nav-link" href="order">Status</a>
+				</li>
             </ul>
             <div class="my-2 my-lg-0">
                 <ul class="navbar-nav ml-auto">
