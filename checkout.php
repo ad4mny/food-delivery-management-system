@@ -1,52 +1,87 @@
 <?php
 session_start();
 include("db.php");
-include("auth.php");
-$id = $_GET['id'];
 
-if ($_GET['act'] == 'add') {
-	$_SESSION['sess_cart'][$id] += 1;
-	header('location: checkout');
-}
-
-if ($_GET['act'] == 'del') {
-	$_SESSION['sess_cart'][$id] -= 1;
-	if ($_SESSION['sess_cart'][$id] == 0) {
-		unset($_SESSION['sess_cart'][$id]);
+if (isset($_SESSION["sess_id"])) {
+	$usr_id = $_SESSION["sess_id"];
+	if ($_SESSION["sess_status"] == "admin") {
+		header('location: admin/pnl_user');
 	}
-	header('location: checkout');
+	if ($_SESSION["sess_status"] == "shop") {
+		header('location: shop/pnl_order');
+	}
 }
 
-if ($_GET['act'] == 'confirm') {
+if (isset($_GET['id'])) {
+	$id = $_GET['id'];
+}
 
-	if (isset($_SESSION['sess_cart'])) {
+if (isset($_GET['act'])) {
 
-		$query = "SELECT * from fds_ordr WHERE ordr_usrdt_id='$usr_id'";
-		$result = mysqli_query($conn, $query);
+	if ($_GET['act'] == 'add') {
+		$_SESSION['sess_cart'][$id] += 1;
+		header('location: checkout');
+	}
 
-		if (mysqli_num_rows($result) > 0) {
+	if ($_GET['act'] == 'del') {
+		$_SESSION['sess_cart'][$id] -= 1;
+		if ($_SESSION['sess_cart'][$id] == 0) {
+			unset($_SESSION['sess_cart'][$id]);
+		}
+		header('location: checkout');
+	}
 
-			unset($_SESSION['sess_cart']);
-			header('location: checkout?act=error');
-			exit();
-		} else {
+	if ($_GET['act'] == 'payment') {
 
-			foreach ($_SESSION['sess_cart'] as $key => $data) {
+		if (isset($_GET['flag']) == 'pay') {
 
-				$ctlog_id = decryptIt($key);
+			$time = $_GET['ordertime'];
 
-				$query = "INSERT INTO fds_ordr (ordr_usrdt_id, ordr_ctlog_id, ordr_qty, ordr_dte) VALUES('$usr_id', '$ctlog_id', '$data', '$date')";
-				mysqli_query($conn, $query) or die($query . '  ERROR!');
+			if (isset($_SESSION['sess_id'])) {
+
+				$query = "SELECT * from fds_ordr WHERE ordr_usrdt_id='$usr_id'";
+				$result = mysqli_query($conn, $query);
+
+				if (mysqli_num_rows($result) > 0) {
+					unset($_SESSION['sess_cart']);
+					header('location: checkout?act=error');
+					exit();
+				} else {
+					foreach ($_SESSION['sess_cart'] as $key => $data) {
+
+						$ctlog_id = decryptIt($key);
+
+						$query = "INSERT INTO fds_ordr (ordr_usrdt_id, ordr_ctlog_id, ordr_qty, ordr_dte, ordr_pick) 
+									VALUES('$usr_id', '$ctlog_id', '$data', '$date','$time')";
+						mysqli_query($conn, $query) or die($query . '  ERROR!');
+						$inv_ordr_id = mysqli_insert_id($conn);
+
+						$query = "SELECT ctlog_prc FROM fds_ctlog WHERE ctlog_id = '$ctlog_id'";
+						$row = mysqli_fetch_assoc(mysqli_query($conn, $query));
+
+						$total_amount = $row['ctlog_prc'] * $data;
+
+						if ($_GET['return'] == 'paypal') {
+							$query = "INSERT INTO fds_inv (inv_ordr_id, inv_pay_stat, inv_amt, inv_type, inv_dte) 
+									VALUES('$inv_ordr_id', 'paid', '$total_amount', 'paypal', '$date')";
+							mysqli_query($conn, $query);
+						} else {
+							$query = "INSERT INTO fds_inv (inv_ordr_id, inv_pay_stat, inv_amt, inv_type, inv_dte) 
+									VALUES('$inv_ordr_id', 'none', '$total_amount', 'cash', '$date')";
+							mysqli_query($conn, $query);
+						}
+					}
+					unset($_SESSION['sess_cart']);
+					header('location: checkout?act=success');
+					exit();
+				}
+			} else {
+				echo '<script>alert("Please login first to make an order.")</script>';
 			}
-
-			unset($_SESSION['sess_cart']);
-			header('location: checkout?act=success');
+		} else {
+			header('location: checkout?act=cancel');
 			exit();
 		}
-	} else {
-
-		header('location: checkout');
-		exit();
 	}
 }
 
@@ -63,7 +98,6 @@ if ($_GET['act'] == 'confirm') {
 	<link rel="stylesheet" href="bootstrap/css/all.min.css">
 	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
 	<script src="bootstrap/js/jquery-3.4.1.min.js"></script>
-	<script src="bootstrap/js/popper.min.js"></script>
 	<script src="bootstrap/js/bootstrap.min.js"></script>
 	<script>
 		$(document).ready(function() {
@@ -92,6 +126,16 @@ if ($_GET['act'] == 'confirm') {
 					'</div>');
 
 			}
+
+			if (action == 'cancel') {
+				$('#alert').html('<div class="alert alert-warning alert-dismissible fade show" role="alert">' +
+					'<strong>Payment failed!</strong>  Payment has been canceled.' +
+					'<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+					'<span aria-hidden="true">&times;</span>' +
+					'</button>' +
+					'</div>');
+
+			}
 		});
 	</script>
 
@@ -108,7 +152,7 @@ if ($_GET['act'] == 'confirm') {
 			<a class="navbar-brand" href="#">FOS</a>
 			<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
 				<li class="nav-item ">
-					<a class="nav-link" href="home">Home</a>
+					<a class="nav-link" href="index">Home</a>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="browse">Browse </a>
@@ -118,7 +162,13 @@ if ($_GET['act'] == 'confirm') {
 				</li>
 			</ul>
 			<div class="form-inline my-2 my-lg-0">
-				<a href="action?act=lgout" class="btn btn-outline-success my-2 my-sm-0">Logout</a>
+				<?php
+				if (isset($_SESSION['sess_id'])) {
+					echo '<a href="action?act=lgout" class="btn btn-outline-success my-2 my-sm-0">Logout</a>';
+				} else {
+					echo '<a href="index?act=login" class="btn btn-outline-success my-2 my-sm-0">Login</a>';
+				}
+				?>
 			</div>
 		</div>
 	</nav>
@@ -262,6 +312,33 @@ if ($_GET['act'] == 'confirm') {
 		</div>
 
 	</div>
+	<script type="text/javascript">
+		$(document).ready(function() {
+
+			$('#checkout').on('click', function() {
+				$('#ordertime').attr('value', $('#timeorder').val());
+				if ($('#timeorder').val() == '') {
+					alert("Please enter pickup time.");
+				}
+			});
+
+
+
+			$("input[name='payment']").change(function(e) {
+				var payment_type = $("input[name='payment']:checked").val();
+				console.log(payment_type);
+
+				if (payment_type == "cash") {
+					$("#cash").show();
+					$("#paypal").hide();
+				} else {
+					$("#cash").hide();
+					$("#paypal").show();
+				}
+			});
+		});
+	</script>
+
 </body>
 
 </html>

@@ -118,10 +118,10 @@ if (isset($_POST['login'])) {
 
 if (isset($_POST['update'])) {
 
-	if ((!empty($_POST['fullname'])) && (!empty($_POST['address']))) {
+	if ((!empty($_POST['fullname'])) && (!empty($_POST['address_upd']))) {
 
 		$name = $_POST['fullname'];
-		$address = $_POST['address'];
+		$address = $_POST['address_upd'];
 		$id = $_SESSION['sess_id'];
 
 		$query = "UPDATE fds_usrdt SET usrdt_nme = '$name', usrdt_adrs = '$address' WHERE usrdt_id = '$id'";

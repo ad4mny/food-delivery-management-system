@@ -1,22 +1,29 @@
 <?php
 session_start();
 include("db.php");
-include("auth.php");
 
-$id = $_GET['id'];
-
-
-if ($_GET['act'] == 'add') {
-
-	if (!isset($_SESSION['sess_cart'])) {
-		$_SESSION['sess_cart'] = array();
+if (isset($_SESSION["sess_id"])) {
+	$usr_id = $_SESSION["sess_id"];
+	if ($_SESSION["sess_status"] == "admin") {
+		header('location: admin/pnl_user');
 	}
+	if ($_SESSION["sess_status"] == "shop") {
+		header('location: shop/pnl_order');
+	}
+}
 
+if (isset($_GET['id'])) {
+	$id = $_GET['id'];
+}
 
-	$_SESSION['sess_cart'][$id] += 1;
-
-
-	header('location: browse');
+if (isset($_GET['act'])) {
+	if ($_GET['act'] == 'add') {
+		if (!isset($_SESSION['sess_cart'])) {
+			$_SESSION['sess_cart'] = array();
+		}
+		$_SESSION['sess_cart'][$id] += 1;
+		header('location: browse');
+	}
 }
 
 ?>
@@ -36,7 +43,8 @@ if ($_GET['act'] == 'add') {
 	<script src="bootstrap/js/bootstrap.min.js"></script>
 	<style type="text/css">
 		.content {
-			background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://source.unsplash.com/fdlZBWIP0aM/1920x1080');
+			background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+				url('https://source.unsplash.com/fdlZBWIP0aM/1920x1080');
 			/* Full height */
 			height: 100%;
 
@@ -58,7 +66,7 @@ if ($_GET['act'] == 'add') {
 			<a class="navbar-brand" href="#">FOS</a>
 			<ul class="navbar-nav mr-auto mt-2 mt-lg-0">
 				<li class="nav-item ">
-					<a class="nav-link" href="home">Home</a>
+					<a class="nav-link" href="index">Home</a>
 				</li>
 				<li class="nav-item active">
 					<a class="nav-link" href="#">Browse <span class="sr-only">(current)</span></a>
@@ -68,15 +76,19 @@ if ($_GET['act'] == 'add') {
 				</li>
 			</ul>
 			<div class="form-inline my-2 my-lg-0">
-				<a href="action?act=lgout" class="btn btn-outline-success my-2 my-sm-0">Logout</a>
+				<?php
+				if (isset($_SESSION['sess_id'])) {
+					echo '<a href="action?act=lgout" class="btn btn-outline-success my-2 my-sm-0">Logout</a>';
+				} else {
+					echo '<a href="index?act=login" class="btn btn-outline-success my-2 my-sm-0">Login</a>';
+				}
+				?>
 			</div>
 		</div>
 	</nav>
 
-
 	<!-- Content -->
 	<div class="container p-5" id="browse_box">
-
 		<div class="row">
 			<div class="col-9">
 				<h2 class="display-4 text-light">Browse</h2>
@@ -94,7 +106,6 @@ if ($_GET['act'] == 'add') {
 				</div>
 			</div>
 		</div>
-
 		<?php
 
 		$query = "SELECT * from fds_ctlog";
@@ -103,7 +114,6 @@ if ($_GET['act'] == 'add') {
 		$tot_item = mysqli_num_rows($result);
 
 		?>
-
 		<div class="row">
 			<div class="col">
 				<div class="card-columns" id="display_area">

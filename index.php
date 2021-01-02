@@ -2,15 +2,19 @@
 session_start();
 
 if (isset($_SESSION["sess_id"])) {
-echo("test");
+    $usr_id = $_SESSION["sess_id"];
     if ($_SESSION["sess_status"] == "admin") {
         header('location: admin/pnl_user');
-    } else if ($_SESSION["sess_status"] == "shop") {
+    }
+    if ($_SESSION["sess_status"] == "shop") {
         header('location: shop/pnl_order');
-    } else {
-        header('location: home');
     }
 }
+
+if (isset($_GET['id'])) {
+    $id = $_GET['id'];
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -24,13 +28,13 @@ echo("test");
     <link rel="stylesheet" href="bootstrap/css/all.min.css">
     <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
     <script src="bootstrap/js/jquery-3.4.1.min.js"></script>
-    <!-- <script src="bootstrap/js/popper.min.js"></script> -->
     <script src="bootstrap/js/bootstrap.min.js"></script>
     <style type="text/css">
         .masthead {
             height: 100vh;
             min-height: 500px;
-            background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://source.unsplash.com/-YHSwy6uqvk/1920x1080');
+            background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+                url('https://source.unsplash.com/-YHSwy6uqvk/1920x1080');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -48,29 +52,69 @@ echo("test");
         <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
             <a class="navbar-brand" href="#">FOS</a>
             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Home<span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="browse">Browse</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="checkout">Checkout</a>
+                </li>
             </ul>
             <div class="form-inline my-2 my-lg-0">
-                <a href="" class="btn btn-outline-success my-2 my-sm-0" data-toggle="modal" data-target="#modalLoginForm">Login</a>
+                <?php
+                if (isset($_SESSION['sess_id'])) {
+                    echo '<a href="action?act=lgout" class="btn btn-outline-success my-2 my-sm-0">Logout</a>';
+                } else {
+                    echo '<a href="" class="btn btn-outline-success my-2 my-sm-0" data-toggle="modal" 
+                    data-target="#modalLoginForm">Login</a>';
+                }
+                ?>
             </div>
+        </div>
     </nav>
+
+    <!-- Alert -->
+    <div id="alert" style="position:absolute;z-index:1;" class="m-5">
+    </div>
 
     <!-- Content -->
     <!-- Full Page Image Header with Vertically Centered Content -->
     <header class="masthead">
         <div class="container h-100">
             <div class="row h-100 align-items-center">
-                <div class="col-12 text-center text-white">
-                    <h1 class="font-weight-light">Food Ordering System</h1>
-                    <p class="lead">A great way to fill your appetite </p>
-                </div>
+                <?php
+                if (isset($_SESSION['sess_id'])) {
+                    echo '<div class="col-12 text-center text-white">';
+                    echo '<h1 class="font-weight-light">Welcome, ' . $_SESSION["sess_fullname"] . ' !</h1>';
+                    echo '<p class="lead">Browse meal to feed your tummy now.</p>';
+                    echo '<button type="button" class="btn btn-outline-light" data-toggle="modal" 
+                    data-target="#modalUpdateInfo">Update your info</button>';
+                    echo '</div>';
+                } else {
+                    echo '<div class="col-12 text-center text-white">';
+                    echo '<h1 class="font-weight-light">A great way to fill your appetite </h1>';
+                    echo '<p class="lead"><a href="browse" class="btn btn-outline-light">Order now.</a></p>';
+                    echo '</div>';
+                }
+                ?>
             </div>
         </div>
     </header>
+
     <!-- Page Content -->
     <section class="py-5">
         <div class="container">
-            <h2 class="font-weight-light">Order Now</h2>
+            <h2 class="font-weight-light">FOS's About Us</h2>
+            <p>
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellendus ab nulla
+                dolorum autem nisi officiis blanditiis voluptatem hic, assumenda aspernatur facere
+                ipsam nemo ratione cumque magnam enim fugiat reprehenderit expedita.
+            </p>
+        </div>
+        <div class="container pt-4">
+            <h2 class="font-weight-light">FOS's Policy</h2>
             <p>
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repellendus ab nulla
                 dolorum autem nisi officiis blanditiis voluptatem hic, assumenda aspernatur facere
@@ -257,6 +301,49 @@ echo("test");
             </div>
         </div>
     </div>
+
+    <!-- Model Update Info -->
+    <div class="modal fade" id="modalUpdateInfo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <form action="" method="post" id="update_form">
+                    <div class="modal-header text-center">
+                        <h4 class="modal-title w-100 font-weight-bold">Update your info</h4>
+                    </div>
+                    <div class="modal-body mx-3">
+                        <div class="row">
+                            <div class="col">
+                                <label class="sr-only" for="inlineFormInputGroup1"></label>
+                                <div class="input-group mb-2">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text"><i class="fas fa-user"></i></div>
+                                    </div>
+                                    <input type="text" class="form-control" name="fullname" placeholder="Full name" value="<?php echo $_SESSION['sess_fullname']; ?>" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="input-group mb-2">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text"><i class="fas fa-map-marked-alt"></i></div>
+                                    </div>
+                                    <textarea class="form-control" rows="3" id="address_upd" name="address_upd" placeholder="Full address" required><?php echo $_SESSION['sess_address']; ?></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-center">
+                        <div class="col text-center">
+                            <input type="hidden" name="update">
+                            <input type="submit" class="btn btn-default" value="Update">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Script -->
     <script src="bootstrap/js/app.js"></script>
 </body>
