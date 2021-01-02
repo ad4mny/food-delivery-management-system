@@ -118,15 +118,18 @@ if (isset($_POST['login'])) {
 
 if (isset($_POST['update'])) {
 
-	if ((!empty($_POST['fullname'])) && (!empty($_POST['address_upd']))) {
+	if ( (!empty($_POST['fullname'])) && (!empty($_POST['address'])) && (!empty($_POST['usr'])) && (!empty($_POST['pwd']))) {
 
 		$name = $_POST['fullname'];
-		$address = $_POST['address_upd'];
+		$address = $_POST['address'];
+		$usr = $_POST['usr'];
+		$pwd = md5($_POST['pwd']);
 		$id = $_SESSION['sess_id'];
 
-		$query = "UPDATE fds_usrdt SET usrdt_nme = '$name', usrdt_adrs = '$address' WHERE usrdt_id = '$id'";
+		$query = "UPDATE fds_usrdt SET usrdt_nme = '$name', usrdt_adrs = '$address', usrdt_usr = '$usr' , usrdt_pwd = '$pwd'  WHERE usrdt_id = '$id'";
 		$result = mysqli_query($conn, $query);
 
+		$_SESSION['sess_username'] = $usr;
 		$_SESSION['sess_fullname'] = $name;
 		$_SESSION['sess_address'] = $address;
 

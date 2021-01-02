@@ -62,15 +62,27 @@ if (isset($_GET['id'])) {
                     <a class="nav-link" href="checkout">Checkout</a>
                 </li>
             </ul>
-            <div class="form-inline my-2 my-lg-0">
-                <?php
-                if (isset($_SESSION['sess_id'])) {
-                    echo '<a href="action?act=lgout" class="btn btn-outline-success my-2 my-sm-0">Logout</a>';
-                } else {
-                    echo '<a href="" class="btn btn-outline-success my-2 my-sm-0" data-toggle="modal" 
-                    data-target="#modalLoginForm">Login</a>';
-                }
-                ?>
+            <div class="my-2 my-lg-0">
+                <ul class="navbar-nav ml-auto">
+                    <?php
+                    if (isset($_SESSION['sess_id'])) {
+                    ?>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-333" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-user"></i> </a>
+                            <div class="dropdown-menu dropdown-menu-right dropdown-default" aria-labelledby="navbarDropdownMenuLink-333">
+                                <a class="dropdown-item" href="profile">Profile</a>
+                                <a class="dropdown-item" href="action?act=lgout">Logout</a>
+                            </div>
+                        </li>
+                    <?php
+                    } else {
+                    ?>
+                        <a href="" class="btn btn-outline-success my-2 my-sm-0" data-toggle="modal" data-target="#modalLoginForm">Login</a>
+                    <?php
+                    }
+                    ?>
+                </ul>
             </div>
         </div>
     </nav>
@@ -87,10 +99,9 @@ if (isset($_GET['id'])) {
                 <?php
                 if (isset($_SESSION['sess_id'])) {
                     echo '<div class="col-12 text-center text-white">';
-                    echo '<h1 class="font-weight-light">Welcome, ' . $_SESSION["sess_fullname"] . ' !</h1>';
+                    echo '<h1 class="font-weight-light">Welcome, ' . $_SESSION["sess_username"] . ' !</h1>';
                     echo '<p class="lead">Browse meal to feed your tummy now.</p>';
-                    echo '<button type="button" class="btn btn-outline-light" data-toggle="modal" 
-                    data-target="#modalUpdateInfo">Update your info</button>';
+                    echo '<a href="profile?act=update" class="btn btn-outline-light">Update your info</button>';
                     echo '</div>';
                 } else {
                     echo '<div class="col-12 text-center text-white">';
@@ -295,48 +306,6 @@ if (isset($_GET['id'])) {
                         <div class="col text-center">
                             <input type="hidden" name="login">
                             <input type="submit" class="btn btn-default" value="Login">
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Model Update Info -->
-    <div class="modal fade" id="modalUpdateInfo" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <form action="" method="post" id="update_form">
-                    <div class="modal-header text-center">
-                        <h4 class="modal-title w-100 font-weight-bold">Update your info</h4>
-                    </div>
-                    <div class="modal-body mx-3">
-                        <div class="row">
-                            <div class="col">
-                                <label class="sr-only" for="inlineFormInputGroup1"></label>
-                                <div class="input-group mb-2">
-                                    <div class="input-group-prepend">
-                                        <div class="input-group-text"><i class="fas fa-user"></i></div>
-                                    </div>
-                                    <input type="text" class="form-control" name="fullname" placeholder="Full name" value="<?php echo $_SESSION['sess_fullname']; ?>" required>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col">
-                                <div class="input-group mb-2">
-                                    <div class="input-group-prepend">
-                                        <div class="input-group-text"><i class="fas fa-map-marked-alt"></i></div>
-                                    </div>
-                                    <textarea class="form-control" rows="3" id="address_upd" name="address_upd" placeholder="Full address" required><?php echo $_SESSION['sess_address']; ?></textarea>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer d-flex justify-content-center">
-                        <div class="col text-center">
-                            <input type="hidden" name="update">
-                            <input type="submit" class="btn btn-default" value="Update">
                         </div>
                     </div>
                 </form>

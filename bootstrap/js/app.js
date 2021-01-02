@@ -8,7 +8,7 @@ $(document).ready(function () {
     var errors = { "usr": "0", "pwd": "0" };
 
 
-    //Search Ajax
+    // Search Ajax
     $('#search_query').on('keyup', function () {
 
         var s_data = this.value;
@@ -63,7 +63,7 @@ $(document).ready(function () {
     });
 
 
-    //Compare password 
+    // Compare password 
     $('#pwd, #c_pwd').on('keyup', function () {
 
         if ($('#pwd').val() != $('#c_pwd').val()) {
@@ -80,7 +80,7 @@ $(document).ready(function () {
     });
 
 
-    //Compare password 
+    // Compare password 
     $('#shop_password, #shop_confirm_password').on('keyup', function () {
 
         if ($('#shop_password').val() != $('#shop_confirm_password').val()) {
@@ -97,7 +97,7 @@ $(document).ready(function () {
     });
 
 
-    //Check username availability Ajax
+    // Check username availability Ajax
     $('#usr').on('keyup', function () {
 
         var usrname = this.value;
@@ -126,7 +126,7 @@ $(document).ready(function () {
     });
 
 
-    //Check username availability Ajax
+    // Check username availability Ajax
     $('#shop_username').on('keyup', function () {
 
         var usrname = this.value;
@@ -155,7 +155,7 @@ $(document).ready(function () {
     });
 
 
-    //Create account processing Ajax
+    // Create account processing Ajax
     $('#signup_form').on('submit', function (e) {
 
         e.preventDefault();
@@ -185,7 +185,7 @@ $(document).ready(function () {
     });
 
 
-    //Create account processing Ajax
+    // Create account processing Ajax
     $('#vendor_form').on('submit', function (e) {
 
         e.preventDefault();
@@ -218,7 +218,7 @@ $(document).ready(function () {
     });
 
 
-    //Login authorization Ajax
+    // Login authorization Ajax
     $('#login_form').on('submit', function (e) {
 
         e.preventDefault();
@@ -245,7 +245,7 @@ $(document).ready(function () {
 
     });
 
-
+    // Update credientials
     $('#update_form').on('submit', function (e) {
         e.preventDefault();
         var formData = new FormData(this);
@@ -259,7 +259,7 @@ $(document).ready(function () {
             success: function (html) {
 
                 if (html == 'true') {
-                    window.location.replace('home?not=success');
+                    window.location.replace('profile?not=success');
                 }
             }
         });

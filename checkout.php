@@ -161,15 +161,28 @@ if (isset($_GET['act'])) {
 					<a class="nav-link" href="#">Checkout<span class="sr-only">(current)</span></a>
 				</li>
 			</ul>
-			<div class="form-inline my-2 my-lg-0">
-				<?php
-				if (isset($_SESSION['sess_id'])) {
-					echo '<a href="action?act=lgout" class="btn btn-outline-success my-2 my-sm-0">Logout</a>';
-				} else {
-					echo '<a href="index?act=login" class="btn btn-outline-success my-2 my-sm-0">Login</a>';
-				}
-				?>
-			</div>
+			<div class="my-2 my-lg-0">
+                <ul class="navbar-nav ml-auto">
+                    <?php
+                    if (isset($_SESSION['sess_id'])) {
+                    ?>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-333" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-user"></i> </a>
+                            <div class="dropdown-menu dropdown-menu-right dropdown-default" aria-labelledby="navbarDropdownMenuLink-333">
+                                <a class="dropdown-item" href="profile">Profile</a>
+                                <a class="dropdown-item" href="action?act=lgout">Logout</a>
+                            </div>
+                        </li>
+                    <?php
+                    } else {
+                    ?>
+                        <a href="" class="btn btn-outline-success my-2 my-sm-0" data-toggle="modal" data-target="#modalLoginForm">Login</a>
+                    <?php
+                    }
+                    ?>
+                </ul>
+            </div>
 		</div>
 	</nav>
 
