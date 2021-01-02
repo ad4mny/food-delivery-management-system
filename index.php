@@ -2,7 +2,7 @@
 session_start();
 
 if (isset($_SESSION["sess_id"])) {
-
+echo("test");
     if ($_SESSION["sess_status"] == "admin") {
         header('location: admin/pnl_user');
     } else if ($_SESSION["sess_status"] == "shop") {
