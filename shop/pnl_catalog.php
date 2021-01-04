@@ -39,7 +39,7 @@ if(!isset($_SESSION["sess_id"])) {
 			</div>
 		</div>
 
-		<div class="row p-4">
+		<div class="row p-4  text-capitalize">
 			<div class="col">
 				<h2>catalog list | <small><a href="pnl_catalog_update?act=addctlog&id=null">add new menu</a> </small></h2>
 				<table class="table">

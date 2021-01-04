@@ -39,7 +39,6 @@ if (isset($_GET['act'])) {
 	<link rel="stylesheet" href="bootstrap/css/all.min.css">
 	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
 	<script src="bootstrap/js/jquery-3.4.1.min.js"></script>
-	<script src="bootstrap/js/popper.min.js"></script>
 	<script src="bootstrap/js/bootstrap.min.js"></script>
 	<style type="text/css">
 		.content {
@@ -101,21 +100,14 @@ if (isset($_GET['act'])) {
 	</nav>
 
 	<!-- Content -->
-	<div class="container p-5" id="browse_box">
+	<div class="container my-5" id="browse_box">
 		<div class="row">
-			<div class="col-9">
-				<h2 class="display-4 text-light">Browse</h2>
+			<div class="col-8">
+				<h2 class="display-4 text-light"><i class="fas fa-book-open"></i> Browse Menu</h2>
 			</div>
-			<div class="col-3">
+			<div class="col-4">
 				<div class="input-group mt-4">
 					<input type="text" id="search_query" class="form-control" placeholder="Search..">
-					<div class="input-group-append">
-						<button class="btn btn-success dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Filter</button>
-						<div class="dropdown-menu">
-							<a class="dropdown-item" href="browse?q_filter=name">Name</a>
-							<a class="dropdown-item" href="browse?q_filter=shop">Shop</a>
-						</div>
-					</div>
 				</div>
 			</div>
 		</div>
@@ -128,8 +120,8 @@ if (isset($_GET['act'])) {
 
 		?>
 		<div class="row">
-			<div class="col">
-				<div class="card-columns" id="display_area">
+			<div class="col ">
+				<div class="card-columns m-auto text-center pt-5" id="display_area">
 					<?php
 					while ($row = mysqli_fetch_assoc($result)) {
 
@@ -142,7 +134,7 @@ if (isset($_GET['act'])) {
 
 					?>
 
-						<div class="card " style="width: 18rem;">
+						<div class="card text-left" style="width: 18rem;">
 
 							<?php
 

@@ -10,6 +10,8 @@ if (isset($_SESSION["sess_id"])) {
     if ($_SESSION["sess_status"] == "shop") {
         header('location: shop/pnl_order');
     }
+} else {
+    header('location: index');
 }
 
 ?>
@@ -86,7 +88,7 @@ if (isset($_SESSION["sess_id"])) {
     </nav>
 
     <!-- Content -->
-    <div class="container pt-5">
+    <div class="container my-5">
 
         <!-- Alert -->
         <div id="alert" style="position:absolute;z-index:1;">
@@ -97,7 +99,7 @@ if (isset($_SESSION["sess_id"])) {
         <div class="row bg-light rounded p-5">
 
             <div class="col-4 " id="profile_display">
-                <h4 class="pb-3 border-bottom text-capitalize">Hi, <?php echo $_SESSION["sess_username"]; ?>.</h4>
+                <h4 class="pb-3 text-capitalize">Hi, <?php echo $_SESSION["sess_username"]; ?>.</h4>
                 <div class="form-group ">
                     <div class="mb-1 "><i class="fas fa-user"></i> Full Name</div>
                     <div class="text-muted  text-capitalize"> <?php echo $_SESSION["sess_fullname"]; ?></div>
@@ -113,7 +115,7 @@ if (isset($_SESSION["sess_id"])) {
 
             <div class="col-4 " id="update_display" style="display: none;">
                 <form action="" method="POST" id="update_form">
-                    <h4 class="pb-3 border-bottom text-capitalize">Update your profile.</h4>
+                    <h4 class="pb-3 text-capitalize">Update your profile.</h4>
                     <div class="form-group font-weight-light">
                         <div class="mb-1 "><i class="fas fa-user"></i> Full Name</div>
                         <div class="text-muted  text-capitalize"> </div>
@@ -141,29 +143,59 @@ if (isset($_SESSION["sess_id"])) {
             </div>
 
             <div class="col border-left">
-                <h4 class="pb-3 border-bottom ">Order History</h4>
+                <h4 class="pb-2">Current Order</h4>
                 <div class="p-2">
                     <?php
 
-                    $query = "select * FROM fds_ordr WHERE ordr_usrdt_id ORDER BY ordr_id DESC";
+                    $query = "select * FROM fds_ordr JOIN fds_ctlog ON fds_ctlog.ctlog_id=fds_ordr.ordr_ctlog_id WHERE ordr_usrdt_id='$usr_id' AND ordr_stat='Preparing' ORDER BY ordr_id DESC";
                     $result = mysqli_query($conn, $query);
 
                     if (mysqli_num_rows($result) > 0) {
 
                         while ($row = mysqli_fetch_assoc($result)) {
 
-                            echo '<div class="row shadow-sm mb-1 bg-white rounded">';
+                            echo '<div class="row shadow mb-1 bg-white rounded">';
 
-                            if ($row['product_image'] != null) {
-                                echo '<div class="col-2 "><img class="img-fluid" src="../../' . $row['product_image'] . '" alt="Image Unavailable"></div>';
+                            if ($row['ctlog_img'] != null) {
+                                echo '<div class="col-3"><img class="img-fluid" src="img/menu/' . $row['ctlog_img'] . '" alt="Image Unavailable"></div>';
                             } else {
-                                echo '<div class="col-2 "><img class="img-fluid" src="https://dummyimage.com/640x360/f0f0f0/aaa" alt="Image Unavailable"></div>';
+                                echo '<div class="col-3"><img class="img-fluid" src="https://dummyimage.com/640x360/f0f0f0/aaa" alt="Image Unavailable"></div>';
                             }
 
-                            echo '<div class="col-8  p-3">' . $row['product_name'] .
-                                '<br><small class="text-muted">' . $row['product_desc'] . '</small></div>';
-                            echo '<div class="col-2  p-3 text-muted font-italic"><small >' . $row['od_status'] . '</small>
-							<br><small class="text-muted">' . $row['od_product_qty'] . ' Unit(s)</small></div>';
+                            echo '<div class="col-7 text-capitalize">' . $row['ctlog_nme'] .
+                                '<br><small class="text-muted">' . $row['ctlog_desc'] . '</small></div>';
+                            echo '<div class="col-2 text-muted font-italic"><small >' . $row['ordr_stat'] . '</small>
+							<br><small class="text-muted">' . $row['ordr_qty'] . ' Order(s)</small></div>';
+                            echo '</div>';
+                        }
+                    } else {
+                        echo "<p class=''> No order made yet.</p>";
+                    }
+                    ?>
+                </div>
+                <h4 class="pb-2">Order History</h4>
+                <div class="p-2">
+                    <?php
+
+                    $query = "select * FROM fds_ordr JOIN fds_ctlog ON fds_ctlog.ctlog_id=fds_ordr.ordr_ctlog_id WHERE ordr_usrdt_id='$usr_id' AND ordr_stat='Completed' ORDER BY ordr_id DESC";
+                    $result = mysqli_query($conn, $query);
+
+                    if (mysqli_num_rows($result) > 0) {
+
+                        while ($row = mysqli_fetch_assoc($result)) {
+
+                            echo '<div class="row mb-1 bg-white ">';
+
+                            if ($row['ctlog_img'] != null) {
+                                echo '<div class="col-3"><img class="img-fluid" src="img/menu/' . $row['ctlog_img'] . '" alt="Image Unavailable"></div>';
+                            } else {
+                                echo '<div class="col-3"><img class="img-fluid" src="https://dummyimage.com/640x360/f0f0f0/aaa" alt="Image Unavailable"></div>';
+                            }
+
+                            echo '<div class="col-7 text-capitalize">' . $row['ctlog_nme'] .
+                                '<br><small class="text-muted">' . $row['ctlog_desc'] . '</small></div>';
+                            echo '<div class="col-2 text-muted font-italic"><small >' . $row['ordr_stat'] . '</small>
+							<br><small class="text-muted">' . $row['ordr_qty'] . ' Order(s)</small></div>';
                             echo '</div>';
                         }
                     } else {

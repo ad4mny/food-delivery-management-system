@@ -86,11 +86,12 @@ $(document).ready(function () {
                         $('#display_area').append('<div class="card text-right" style="width: 18rem;">' +
                             imgsrc +
                             '<div class="card-body">' +
-                            '<h5 class="card-title">' + data[i].ctlog_nme + '</h5>' +
-                            '<p class="card-text">RM ' + data[i].ctlog_prc + '</p>' +
+                            '<h5 class="card-title text-capitalize">' + data[i].ctlog_nme + '</h5>' +
+                            '<p class="card-text text-muted">' + data[i].ctlog_desc + '</p>' +
+                            '<p class="card-text text-capitalize">' + data[i].ctlog_shp + "'s Shop</p>" +
                             '</div>' +
-                            '<div class="card-body" id="<?php echo encryptIt($itm_id); ?>">' +
-                            '<a href="browse?act=view&id=' + data[i].ctlog_id + '" class="btn btn-outline-success mx-1">More info</a>' +
+                            '<div class="card-footer text-right">' +
+                            '<h5 class="card-text float-left text-success">RM ' + data[i].ctlog_prc + '</h5>' +
                             '<a href="browse?act=add&id=' + data[i].ctlog_id + '" class="btn btn-success">Add to cart</a>' +
                             '</div>' +
                             '</div>');

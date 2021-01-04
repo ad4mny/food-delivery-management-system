@@ -56,7 +56,7 @@ if (isset($_SESSION["sess_id"])) {
 					<?php
 					if (isset($_SESSION['sess_id'])) {
 					?>
-						<li class="nav-item dropdown active">
+						<li class="nav-item dropdown ">
 							<a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-333" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 								<i class="fas fa-user"></i> </a>
 							<div class="dropdown-menu dropdown-menu-right dropdown-default" aria-labelledby="navbarDropdownMenuLink-333">
@@ -77,7 +77,7 @@ if (isset($_SESSION["sess_id"])) {
 	</nav>
 
 	<!-- Content -->
-	<div class="container pt-5">
+	<div class="container my-5">
 
 		<!-- Alert -->
 		<div id="alert" style="position:absolute;z-index:1;">
@@ -98,7 +98,7 @@ if (isset($_SESSION["sess_id"])) {
 				<?php
 				if (isset($usr_id)) {
 
-					$query = "SELECT * from fds_ordr JOIN fds_inv ON ordr_id=inv_ordr_id WHERE ordr_usrdt_id='$usr_id'";
+					$query = "SELECT * from fds_ordr JOIN fds_inv ON fds_ordr.ordr_id=fds_inv.inv_ordr_id WHERE fds_ordr.ordr_usrdt_id='$usr_id' AND fds_ordr.ordr_stat!='Completed'";
 					$result = mysqli_query($conn, $query);
 					$tot_prc = 0;
 
@@ -153,6 +153,10 @@ if (isset($_SESSION["sess_id"])) {
 						echo '<div class="col"> No item has been ordered.</div>';
 						echo '</div>';
 					}
+				} else {
+					echo '<div class="row border-top py-3">';
+					echo '<div class="col"> No item has been ordered.</div>';
+					echo '</div>';
 				}
 				?>
 			</div>

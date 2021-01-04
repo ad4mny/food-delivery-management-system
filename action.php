@@ -173,6 +173,8 @@ if (isset($_POST['data'])) {
 					$new_data[$key]['ctlog_nme'] = $row['ctlog_nme'];
 					$new_data[$key]['ctlog_img'] = $row['ctlog_img'];
 					$new_data[$key]['ctlog_prc'] = $row['ctlog_prc'];
+					$new_data[$key]['ctlog_desc'] = $row['ctlog_desc'];
+					$new_data[$key]['ctlog_shp'] = $row['ctlog_shp'];
 
 					$key++;
 				};
@@ -197,6 +199,8 @@ if (isset($_POST['data'])) {
 					$new_data[$key]['ctlog_nme'] = $row['ctlog_nme'];
 					$new_data[$key]['ctlog_img'] = $row['ctlog_img'];
 					$new_data[$key]['ctlog_prc'] = $row['ctlog_prc'];
+					$new_data[$key]['ctlog_desc'] = $row['ctlog_desc'];
+					$new_data[$key]['ctlog_shp'] = $row['ctlog_shp'];
 
 					$key++;
 				};
