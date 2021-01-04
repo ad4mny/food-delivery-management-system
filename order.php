@@ -25,38 +25,7 @@ if (isset($_SESSION["sess_id"])) {
 	<link rel="stylesheet" href="bootstrap/css/all.min.css">
 	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
 	<script src="bootstrap/js/jquery-3.4.1.min.js"></script>
-	<!-- <script src="bootstrap/js/popper.min.js"></script> -->
 	<script src="bootstrap/js/bootstrap.min.js"></script>
-	<script>
-		$(document).ready(function() {
-
-			//Fetching URL Parameters
-			var url_string = window.location.href;
-			var url = new URL(url_string);
-			var action = url.searchParams.get("act");
-
-			if (action == 'success') {
-				$('#alert').html('<div class="alert alert-success alert-dismissible fade show" role="alert">' +
-					'<strong>Success!</strong>  Your order has been place and please wait patiently, thank you.' +
-					'<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-					'<span aria-hidden="true">&times;</span>' +
-					'</button>' +
-					'</div>');
-
-			}
-
-			if (action == 'error') {
-				$('#alert').html('<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
-					'<strong>Error!</strong> Please wait current order to be delivered before placing a new order, thank you.' +
-					'<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-					'<span aria-hidden="true">&times;</span>' +
-					'</button>' +
-					'</div>');
-
-			}
-		});
-	</script>
-
 </head>
 
 <body class="content bg-white">
@@ -75,27 +44,40 @@ if (isset($_SESSION["sess_id"])) {
 				<li class="nav-item">
 					<a class="nav-link" href="browse">Browse </a>
 				</li>
-				<li class="nav-item ">
+				<li class="nav-item">
 					<a class="nav-link" href="checkout">Checkout</a>
 				</li>
 				<li class="nav-item active">
-					<a class="nav-link" href="#">Status<span class="sr-only">(current)</span></a>
+					<a class="nav-link" href="order">Status</a>
 				</li>
 			</ul>
-			<div class="form-inline my-2 my-lg-0">
-				<?php
-				if (isset($_SESSION['sess_id'])) {
-					echo '<a href="action?act=lgout" class="btn btn-outline-success my-2 my-sm-0">Logout</a>';
-				} else {
-					echo '<a href="index?act=login" class="btn btn-outline-success my-2 my-sm-0">Login</a>';
-				}
-				?>
+			<div class="my-2 my-lg-0">
+				<ul class="navbar-nav ml-auto">
+					<?php
+					if (isset($_SESSION['sess_id'])) {
+					?>
+						<li class="nav-item dropdown active">
+							<a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink-333" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<i class="fas fa-user"></i> </a>
+							<div class="dropdown-menu dropdown-menu-right dropdown-default" aria-labelledby="navbarDropdownMenuLink-333">
+								<a class="dropdown-item" href="profile">Profile</a>
+								<a class="dropdown-item" href="action?act=lgout">Logout</a>
+							</div>
+						</li>
+					<?php
+					} else {
+					?>
+						<a href="index?act=login" class="btn btn-outline-success my-2 my-sm-0">Login</a>
+					<?php
+					}
+					?>
+				</ul>
 			</div>
 		</div>
 	</nav>
 
 	<!-- Content -->
-	<div class=" p-5">
+	<div class="container pt-5">
 
 		<!-- Alert -->
 		<div id="alert" style="position:absolute;z-index:1;">
@@ -115,11 +97,11 @@ if (isset($_SESSION["sess_id"])) {
 
 				<?php
 				if (isset($usr_id)) {
-					$query = "SELECT * from fds_ordr WHERE ordr_usrdt_id='$usr_id'";
+
+					$query = "SELECT * from fds_ordr JOIN fds_inv ON ordr_id=inv_ordr_id WHERE ordr_usrdt_id='$usr_id'";
 					$result = mysqli_query($conn, $query);
-					$count = 1;
 					$tot_prc = 0;
-					
+
 					if (mysqli_num_rows($result) > 0) {
 
 						while ($row = mysqli_fetch_assoc($result)) {
@@ -130,32 +112,55 @@ if (isset($_SESSION["sess_id"])) {
 							$row_data = mysqli_fetch_assoc(mysqli_query($conn, $query));
 
 							echo '<div class="row border-top py-3">';
-							echo '<div class="col-6">' . $row_data['ctlog_nme'] . '</div>';
-							echo '<div class="col-2">' . $row_data['ctlog_prc'] . '</div>';
-							echo '<div class="col-2">' . $row['ordr_qty'] . '</div>';
-							echo '<div class="col-2">' . $row['ordr_stat'] . '</div>';
+							echo '<div class="col-6 text-capitalize">' . $row_data['ctlog_nme'] . '</div>';
+							echo '<div class="col-2">RM ' . number_format((float)($row_data['ctlog_prc']), 2, '.', '') . '</div>';
+							echo '<div class="col-2">(' . $row['ordr_qty'] . ')x Order</div>';
+							if ($row['ordr_stat'] != "") {
+								echo '<div class="col-2">' . $row['ordr_stat'] . '</div>';
+							} else {
+								echo '<div class="col-2">Preparing</div>';
+							}
 							echo '</div>';
 							$tot_prc += $row_data['ctlog_prc'] * $row['ordr_qty'];
+							$payment_type = $row['inv_type'];
 						}
 
-						echo '<div class="row border-top pt-3">';
-						echo '<div class="col text-center text-success">Total price: RM ' . round($tot_prc, 1) . '</div>';
+						$tot_svc = number_format((float)(10 / 100 * $tot_prc), 2, '.', '');
+
+
+						echo '<div class="row  border-top pt-3">';
+
+						if ($payment_type == 'paypal') {
+							echo '<h4 class="col text-center text-primary">RM ' . number_format((float)(round($tot_prc + $tot_svc, 1)), 2, '.', '') . ' (Paid)</h4>';
+							echo '</div>';
+
+							echo '<div class="row">';
+							echo '<p class="col text-center ">Pay by Paypal. </p>';
+						} else {
+							echo '<h4 class="col text-center text-success">RM ' . number_format((float)(round($tot_prc + $tot_svc, 1)), 2, '.', '') . ' (Unpaid)</h4>';
+							echo '</div>';
+
+							echo '<div class="row">';
+							echo '<p class="col text-center ">Pay by Cash. </p>';
+						}
 						echo '</div>';
 
 						echo '<div class="row pb-5">';
-						echo '<div class="col text-center text-muted">Note: Please ready small changes and follow exact total price.</div>';
+						echo '<small class="col text-center text-muted">Note: Please ready small changes and follow exact total price.</div>';
+						echo '</small>';
+					} else {
+						echo '<div class="row border-top py-3">';
+						echo '<div class="col"> No item has been ordered.</div>';
 						echo '</div>';
 					}
-				} else {
-					echo '<div class="row border-top py-3">';
-					echo '<div class="col"> No item has been ordered.</div>';
-					echo '</div>';
 				}
 				?>
 			</div>
 		</div>
-
 	</div>
+
+	<script src="bootstrap/js/app.js"></script>
+
 </body>
 
 </html>

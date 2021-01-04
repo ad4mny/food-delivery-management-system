@@ -47,12 +47,13 @@ if (isset($_GET['act'])) {
 					header('location: checkout?act=error');
 					exit();
 				} else {
+
 					foreach ($_SESSION['sess_cart'] as $key => $data) {
 
 						$ctlog_id = decryptIt($key);
 
-						$query = "INSERT INTO fds_ordr (ordr_usrdt_id, ordr_ctlog_id, ordr_qty, ordr_dte, ordr_pick) 
-									VALUES('$usr_id', '$ctlog_id', '$data', '$date','$time')";
+						$query = "INSERT INTO fds_ordr (ordr_usrdt_id, ordr_ctlog_id, ordr_qty, ordr_dte) 
+									VALUES('$usr_id', '$ctlog_id', '$data', '$date')";
 						mysqli_query($conn, $query) or die($query . '  ERROR!');
 						$inv_ordr_id = mysqli_insert_id($conn);
 
@@ -76,7 +77,7 @@ if (isset($_GET['act'])) {
 					exit();
 				}
 			} else {
-				echo '<script>alert("Please login first to make an order.")</script>';
+				header('Location: checkout?act=not_login');
 			}
 		} else {
 			header('location: checkout?act=cancel');
@@ -99,46 +100,6 @@ if (isset($_GET['act'])) {
 	<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
 	<script src="bootstrap/js/jquery-3.4.1.min.js"></script>
 	<script src="bootstrap/js/bootstrap.min.js"></script>
-	<script>
-		$(document).ready(function() {
-
-			//Fetching URL Parameters
-			var url_string = window.location.href;
-			var url = new URL(url_string);
-			var action = url.searchParams.get("act");
-
-			if (action == 'success') {
-				$('#alert').html('<div class="alert alert-success alert-dismissible fade show" role="alert">' +
-					'<strong>Success!</strong>  Your order has been place and please wait patiently, thank you.' +
-					'<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-					'<span aria-hidden="true">&times;</span>' +
-					'</button>' +
-					'</div>');
-
-			}
-
-			if (action == 'error') {
-				$('#alert').html('<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
-					'<strong>Error!</strong> Please wait current order to be delivered before placing a new order, thank you.' +
-					'<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-					'<span aria-hidden="true">&times;</span>' +
-					'</button>' +
-					'</div>');
-
-			}
-
-			if (action == 'cancel') {
-				$('#alert').html('<div class="alert alert-warning alert-dismissible fade show" role="alert">' +
-					'<strong>Payment failed!</strong>  Payment has been canceled.' +
-					'<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
-					'<span aria-hidden="true">&times;</span>' +
-					'</button>' +
-					'</div>');
-
-			}
-		});
-	</script>
-
 </head>
 
 <body class="content bg-light">
@@ -180,7 +141,7 @@ if (isset($_GET['act'])) {
 					<?php
 					} else {
 					?>
-						<a href="" class="btn btn-outline-success my-2 my-sm-0" data-toggle="modal" data-target="#modalLoginForm">Login</a>
+						<a href="index?act=login" class="btn btn-outline-success my-2 my-sm-0">Login</a>
 					<?php
 					}
 					?>
@@ -196,69 +157,59 @@ if (isset($_GET['act'])) {
 		<div id="alert" style="position:absolute;z-index:1;">
 		</div>
 
-		<h2 class="display-4">Checkout Cart</h2>
+		<h2 class="display-4"><i class="fas fa-shopping-cart"></i> Checkout Cart</h2>
 
 		<table id="cart" class="table table-hover table-condensed">
-
 			<tr>
-				<th style="width:65%">Meals Info</th>
+				<th style="width:60%">Meals Info</th>
 				<th style="width:10%">Price</th>
-				<th style="width:10%">Quantity</th>
-				<th style="width:15%" class="text-center">Subtotal</th>
+				<th style="width:15%">Quantity</th>
+				<th style="width:15%">Subtotal</th>
 			</tr>
-
 			<?php
 
 			if (!empty($_SESSION['sess_cart'])) {
-
 				$tot_prc = 0;
 
 				foreach ($_SESSION['sess_cart'] as $key => $data) {
 
 					$ctlog_id = decryptIt($key);
-
 					$query = "SELECT * from fds_ctlog WHERE ctlog_id = '$ctlog_id'";
 					$row = mysqli_fetch_assoc(mysqli_query($conn, $query));
 
 			?>
-
 					<tr>
-						<td data-th="Product">
+						<td>
 							<div class="row">
-
 								<?php
 
 								if ($row['ctlog_img'] != null) {
-
 									echo '<div class="col-3 hidden-xs"><img src="img/menu/' . $row['ctlog_img'] .
 										'" alt="No available Image" class="img-fluid"/></div>';
 								} else {
-
 									echo '<div class="col-3 hidden-xs"><img src="http://placehold.it/100x100" 
 										alt="No available Image" class="img-fluid"/></div>';
 								}
 
 								?>
-
 								<div class="col">
-									<h4 class="nomargin"><?php echo $row['ctlog_nme']; ?></h4>
+									<h4 class="text-capitalize"><?php echo $row['ctlog_nme']; ?></h4>
 									<p><?php echo $row['ctlog_desc']; ?></p>
 								</div>
 							</div>
 						</td>
-						<td data-th="Price"><?php echo $row['ctlog_prc']; ?></td>
-						<td data-th="Quantity">
-							<nav>
-								<ul class="pagination">
-									<li class="page-item"><a class="page-link" href="checkout?act=del&id=<?php echo $key; ?>">-</a></li>
-									<li class="page-item disabled"><a class="page-link" href="#"><?php echo $data; ?></a></li>
-									<li class="page-item"><a class="page-link" href="checkout?act=add&id=<?php echo $key; ?>">+</a></li>
-								</ul>
-							</nav>
+						<td><?php echo number_format((float)$row['ctlog_prc'], 2, '.', ''); ?></td>
+						<td>
+							<ul class="pagination">
+								<li class="page-item"><a class="page-link" href="checkout?act=del&id=<?php echo $key; ?>">-</a></li>
+								<li class="page-item disabled"><a class="page-link" href="#"><?php echo $data; ?></a></li>
+								<li class="page-item"><a class="page-link" href="checkout?act=add&id=<?php echo $key; ?>">+</a></li>
+							</ul>
 						</td>
-						<td data-th="Subtotal" class="text-center"><?php echo $row['ctlog_prc'] * $data; ?></td>
+						<td>
+							<?php echo number_format((float)($row['ctlog_prc'] * $data), 2, '.', ''); ?>
+						</td>
 					</tr>
-
 			<?php
 
 					$tot_prc = $tot_prc + $row['ctlog_prc'] * $data;
@@ -269,15 +220,81 @@ if (isset($_GET['act'])) {
 			}
 
 			?>
-
 			<tr>
-				<td colspan="3" class="hidden-xs"></td>
-				<td class="hidden-xs text-center"><strong>Total RM <?php echo round($tot_prc); ?></strong></td>
-				<td><a href="checkout?act=confirm" class="btn btn-success btn-block">Checkout <i class="fa fa-angle-right"></i></a></td>
+				<td colspan="2" class="hidden-xs"></td>
+				<td>
+					<span>Subtotal</span></br>
+					<span>Service Charge</span></br>
+					<span>Total</span>
+				</td>
+				<td>
+					<span>
+						<?php if (isset($tot_prc)) {
+							echo number_format((float)($tot_prc), 2, '.', '');
+						} ?>
+					</span></br>
+					<span>
+						<?php if (isset($tot_prc)) {
+							$tot_svc = number_format((float)(10 / 100 * $tot_prc), 2, '.', '');
+							echo $tot_svc;
+						} ?>
+					</span></br>
+					<h4 class="text-success"> RM
+						<?php if (isset($tot_prc)) {
+							echo number_format((float)(round($tot_prc + $tot_svc, 1)), 2, '.', '');
+						} ?>
+					</h4>
+				</td>
 			</tr>
+			<?php
+
+			if (isset($_SESSION['sess_cart'])) {
+
+			?>
+				<tr>
+					<td colspan="2" class="hidden-xs"></td>
+					<td colspan="2">
+						<div class="form-group">
+							<label class=" mr-4"><input type="radio" class="form-input" name="payment" value="cash" checked>
+								<i class="fas fa-wallet"></i> Cash </label>
+							<label><input type="radio" class="form-input" name="payment" value="paypal">
+								<i class="fab fa-cc-paypal"></i> Paypal</label>
+						</div>
+						<div id="cash">
+							<form action="checkout" method="get">
+								<input type="hidden" name="ordertime" id="ordertime">
+								<input type="hidden" name="flag" value="pay">
+								<input type="hidden" name="return" value="cash">
+								<input type="hidden" name="act" value="payment">
+								<button type="submit" class="btn btn-success btn-block" id="checkout"> Confirm Order
+									<i class="fa fa-angle-right"></i></button>
+							</form>
+						</div>
+						<div id="paypal" style="display: none;">
+							<form action="<?php echo PAYPAL_URL; ?>" method="post">
+								<input type="hidden" name="business" value="<?php echo PAYPAL_ID; ?>">
+								<input type="hidden" name="cmd" value="_xclick">
+								<input type="hidden" name="item_name" value="<?php echo 'mehOrder Takeaway Services'; ?>">
+								<input type="hidden" name="item_number" value="">
+								<input type="hidden" name="amount" value="<?php echo $tot_prc; ?>">
+								<input type="hidden" name="currency_code" value="<?php echo PAYPAL_CURRENCY; ?>">
+
+								<input type="hidden" name="return" value="<?php echo PAYPAL_RETURN_URL; ?>">
+								<input type="hidden" name="cancel_return" value="<?php echo PAYPAL_CANCEL_URL; ?>">
+								<input type="submit" name="submit" class="btn btn-primary btn-block" value="Pay Now">
+							</form>
+						</div>
+					</td>
+				</tr>
+			<?php
+			}
+
+
+			?>
 		</table>
 
 	</div>
+
 	<script type="text/javascript">
 		$(document).ready(function() {
 
@@ -302,6 +319,8 @@ if (isset($_GET['act'])) {
 			});
 		});
 	</script>
+
+	<script src="bootstrap/js/app.js"></script>
 
 </body>
 

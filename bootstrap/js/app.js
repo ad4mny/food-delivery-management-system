@@ -1,11 +1,52 @@
 $(document).ready(function () {
 
-    //fetch url string
+    // Fetch URL Parameter
     var url_string = window.location.href;
     var url = new URL(url_string);
     var action = url.searchParams.get("act");
     var filter = url.searchParams.get("q_filter");
     var errors = { "usr": "0", "pwd": "0" };
+
+
+    switch (action) {
+        case "login":
+            $('#modalLoginForm').modal('show');
+            break;
+        case "success":
+            $('#alert').html('<div class="alert alert-success alert-dismissible fade show" role="alert">' +
+                '<strong>Success!</strong>  Your order has been place and please wait patiently, thank you.' +
+                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                '<span aria-hidden="true">&times;</span>' +
+                '</button>' +
+                '</div>');
+            break;
+        case "error":
+            $('#alert').html('<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
+                '<strong>Error!</strong> Please wait current order to be delivered before placing a new order, thank you.' +
+                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                '<span aria-hidden="true">&times;</span>' +
+                '</button>' +
+                '</div>');
+            break;
+        case "cancel":
+            $('#alert').html('<div class="alert alert-warning alert-dismissible fade show" role="alert">' +
+                '<strong>Payment failed!</strong>  Payment has been canceled.' +
+                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                '<span aria-hidden="true">&times;</span>' +
+                '</button>' +
+                '</div>');
+            break;
+        case "not_login":
+            $('#alert').html('<div class="alert alert-warning alert-dismissible fade show" role="alert">' +
+                '<strong>Order failed!</strong>  Please login first to place an order.' +
+                '<button type="button" class="close" data-dismiss="alert" aria-label="Close">' +
+                '<span aria-hidden="true">&times;</span>' +
+                '</button>' +
+                '</div>');
+            break;
+        default:
+            break;
+    }
 
 
     // Search Ajax
@@ -62,7 +103,6 @@ $(document).ready(function () {
 
     });
 
-
     // Compare password 
     $('#pwd, #c_pwd').on('keyup', function () {
 
@@ -79,8 +119,7 @@ $(document).ready(function () {
 
     });
 
-
-    // Compare password 
+    // Compare shop password 
     $('#shop_password, #shop_confirm_password').on('keyup', function () {
 
         if ($('#shop_password').val() != $('#shop_confirm_password').val()) {
@@ -95,7 +134,6 @@ $(document).ready(function () {
         }
 
     });
-
 
     // Check username availability Ajax
     $('#usr').on('keyup', function () {
@@ -125,8 +163,7 @@ $(document).ready(function () {
 
     });
 
-
-    // Check username availability Ajax
+    // Check shop username availability Ajax
     $('#shop_username').on('keyup', function () {
 
         var usrname = this.value;
@@ -153,7 +190,6 @@ $(document).ready(function () {
         });
 
     });
-
 
     // Create account processing Ajax
     $('#signup_form').on('submit', function (e) {
@@ -183,7 +219,6 @@ $(document).ready(function () {
         }
 
     });
-
 
     // Create account processing Ajax
     $('#vendor_form').on('submit', function (e) {
@@ -216,7 +251,6 @@ $(document).ready(function () {
         }
 
     });
-
 
     // Login authorization Ajax
     $('#login_form').on('submit', function (e) {

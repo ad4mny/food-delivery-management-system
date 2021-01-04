@@ -7,6 +7,15 @@ $dbuser = "root";
 $dbpass = "mysql";
 $db = "fdsdb";
 
+// paypal config
+define('PAYPAL_ID', 'sb-ju51r2591117@business.example.com'); 
+define('PAYPAL_SANDBOX', TRUE); 
+define('PAYPAL_RETURN_URL', 'http://localhost/devfdms/checkout?act=payment&flag=pay&return=paypal'); 
+define('PAYPAL_CANCEL_URL', 'http://localhost/devfdms/checkout?act=payment&flag=cancel'); 
+define('PAYPAL_NOTIFY_URL', 'http://localhost/devfdms'); 
+define('PAYPAL_CURRENCY', 'MYR'); 
+define('PAYPAL_URL', (PAYPAL_SANDBOX == true)?"https://www.sandbox.paypal.com/cgi-bin/webscr":"https://www.paypal.com/cgi-bin/webscr");
+
 $conn = mysqli_connect("$dbhost", "$dbuser", "$dbpass", "$db") or die("Connection failed: " . $conn->connect_error);
 
 function encryptIt( $q ) {

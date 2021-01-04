@@ -29,7 +29,7 @@ if (isset($_SESSION["sess_id"])) {
     <style type="text/css">
         .content {
             background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
-                url('https://source.unsplash.com/fdlZBWIP0aM/');
+                url('https://source.unsplash.com/fdlZBWIP0aM/1920x1080');
             height: 100%;
             background-position: center;
             background-repeat: repeat;
@@ -37,7 +37,7 @@ if (isset($_SESSION["sess_id"])) {
     </style>
 </head>
 
-<body class="content ">
+<body class="content">
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light sticky-top shadow bg-light">
@@ -57,8 +57,8 @@ if (isset($_SESSION["sess_id"])) {
                     <a class="nav-link" href="checkout">Checkout</a>
                 </li>
                 <li class="nav-item">
-					<a class="nav-link" href="order">Status</a>
-				</li>
+                    <a class="nav-link" href="order">Status</a>
+                </li>
             </ul>
             <div class="my-2 my-lg-0">
                 <ul class="navbar-nav ml-auto">
@@ -76,7 +76,7 @@ if (isset($_SESSION["sess_id"])) {
                     <?php
                     } else {
                     ?>
-                        <a href="" class="btn btn-outline-success my-2 my-sm-0" data-toggle="modal" data-target="#modalLoginForm">Login</a>
+                        <a href="index?act=login" class="btn btn-outline-success my-2 my-sm-0">Login</a>
                     <?php
                     }
                     ?>

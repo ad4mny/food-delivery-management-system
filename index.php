@@ -104,7 +104,7 @@ if (isset($_GET['id'])) {
                     echo '<div class="col-12 text-center text-white">';
                     echo '<h1 class="font-weight-light">Welcome, ' . $_SESSION["sess_username"] . ' !</h1>';
                     echo '<p class="lead">Browse meal to feed your tummy now.</p>';
-                    echo '<a href="profile?act=update" class="btn btn-outline-light">Update your info</button>';
+                    echo '<a href="profile?act=update" class="btn btn-outline-light">Update your info</a>';
                     echo '</div>';
                 } else {
                     echo '<div class="col-12 text-center text-white">';
