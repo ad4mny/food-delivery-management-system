@@ -4,7 +4,7 @@ $date = date('Y/m/d H:ia');
 
 $dbhost = "localhost";
 $dbuser = "root";
-$dbpass = "mysql";
+$dbpass = "";
 $db = "fdsdb";
 
 // paypal config
